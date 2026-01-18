@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import API from '../services/api';
-import styles from './Login.module.css';  // Add this import
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,30 +12,73 @@ const Login = () => {
       localStorage.setItem('token', res.data.token);
       window.location = '/dashboard';
     } catch (err) {
-      alert('Login failed');
+      setError('Login failed. Check credentials or try again.');
     }
   };
 
   return (
-    <div className={styles.container}>  {/* Apply container class */}
-      <form className={styles.form} onSubmit={handleSubmit}>  {/* Apply form class */}
-        <h2 className={styles.title}>Login</h2>  {/* Apply title class */}
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      backgroundColor: '#f0f0f0',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <form onSubmit={handleSubmit} style={{
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+        width: '300px',
+        textAlign: 'center'
+      }}>
+        <h2 style={{ marginBottom: '20px', color: '#333' }}>Login</h2>
+        {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
         <input
-          className={styles.input}  
           type="email"
           placeholder="Email"
+          value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginBottom: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }}
         />
         <input
-          className={styles.input}  
           type="password"
           placeholder="Password"
+          value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           required
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginBottom: '20px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }}
         />
-        <button className={styles.button} type="submit">Login</button>  {/* Apply button class */}
-        <p className={styles.link}>Don't have an account? <a href="/register">Register</a></p>  {/* Apply link class */}
+        <button type="submit" style={{
+          width: '100%',
+          padding: '10px',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer'
+        }}>
+          Login
+        </button>
+        <p style={{ marginTop: '10px' }}>
+          Don't have an account? <a href="/register" style={{ color: '#4CAF50' }}>Register</a>
+        </p>
       </form>
     </div>
   );
