@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Exam from '../components/Exam';
 import API from '../services/api';
+import styles from './TakeExam.module.css';  // Add this import
 
 const TakeExam = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const TakeExam = () => {
     }).catch(() => alert('Submission failed'));
   };
 
-  return exam ? <Exam exam={exam} onSubmit={handleSubmit} /> : <p>Loading...</p>;
+  return exam ? <Exam exam={exam} onSubmit={handleSubmit} /> : <div className={styles.loading}><div className={styles.spinner}></div>Loading...</div>;  {/* Apply loading and spinner classes */}
 };
 
 export default TakeExam;

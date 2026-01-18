@@ -1,66 +1,44 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import API from '../services/api';
+import styles from './Login.module.css';  // Add this import
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+const Login = () => {
+  const [form, setForm] = useState({ email: '', password: '' });
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.post("/api/login", {
-        email,
-        password,
-      });
-
-      console.log("LOGIN RESPONSE:", res.data);
-
-      alert("Login successful ❤️");
-
-      // optional: store user
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("LOGIN ERROR:", error.response?.data || error.message);
-      alert("Login failed");
+      const res = await API.post('/auth/login', form);
+      localStorage.setItem('token', res.data.token);
+      window.location = '/dashboard';
+    } catch (err) {
+      alert('Login failed');
     }
   };
 
   return (
-    <div style={{ marginTop: "100px", textAlign: "center" }}>
-      <h2>Login</h2>
-
-      <form onSubmit={handleLogin}>
+    <div className={styles.container}>  {/* Apply container class */}
+      <form className={styles.form} onSubmit={handleSubmit}>  {/* Apply form class */}
+        <h2 className={styles.title}>Login</h2>  {/* Apply title class */}
         <input
+          className={styles.input}  
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
-        <br /><br />
-
         <input
+          className={styles.input}  
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
           required
         />
-        <br /><br />
-
-        <button type="submit">Login</button>
+        <button className={styles.button} type="submit">Login</button>  {/* Apply button class */}
+        <p className={styles.link}>Don't have an account? <a href="/register">Register</a></p>  {/* Apply link class */}
       </form>
-
-      <p>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
     </div>
   );
-}
+};
 
 export default Login;

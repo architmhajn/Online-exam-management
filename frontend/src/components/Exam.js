@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import WebcamMonitor from './WebcamMonitor';
 import screenfull from 'screenfull';
+import styles from './Exam.module.css';  // Add this import
 
 const Exam = ({ exam, onSubmit }) => {
   const [answers, setAnswers] = useState([]);
@@ -45,13 +46,13 @@ const Exam = ({ exam, onSubmit }) => {
   const shuffledQuestions = exam.randomizeQuestions ? [...exam.questions].sort(() => Math.random() - 0.5) : exam.questions;
 
   return (
-    <div ref={examRef} style={{ width: '100vw', height: '100vh' }}>
+    <div ref={examRef} className={styles.container}>  {/* Apply container class */}
       <WebcamMonitor onCheatingDetected={() => setCheatingFlags(prev => [...prev, 'webcamIssue'])} />
-      <h2>{exam.title}</h2>
-      <p>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</p>
-      {cheatingFlags.length > 0 && <p style={{ color: 'red' }}>Cheating Detected: {cheatingFlags.join(', ')}</p>}
+      <h2 className={styles.title}>{exam.title}</h2>  {/* Apply title class */}
+      <p className={styles.timer}>Time Left: {Math.floor(timeLeft / 60)}:{timeLeft % 60}</p>  {/* Apply timer class */}
+      {cheatingFlags.length > 0 && <p className={styles.cheating}>Cheating Detected: {cheatingFlags.join(', ')}</p>}  {/* Apply cheating class */}
       {shuffledQuestions.map((q, i) => (
-        <div key={i}>
+        <div key={i} className={styles.question}>  {/* Apply question class */}
           <p>{q.question}</p>
           {q.options.map((opt, j) => (
             <label key={j}>
@@ -60,12 +61,12 @@ const Exam = ({ exam, onSubmit }) => {
                 newAnswers[i] = j;
                 setAnswers(newAnswers);
               }} />
-              {opt}
+              <span className={styles.option}>{opt}</span>  {/* Apply option class */}
             </label>
           ))}
         </div>
       ))}
-      <button onClick={() => onSubmit(answers, cheatingFlags)}>Submit</button>
+      <button className={styles.submitButton} onClick={() => onSubmit(answers, cheatingFlags)}>Submit</button>  {/* Apply submitButton class */}
     </div>
   );
 };
