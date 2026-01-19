@@ -8,9 +8,9 @@ router.put('/assign-role/:id', auth, async (req, res) => {
   const { role } = req.body;
   try {
     await pool.execute('UPDATE users SET role = ? WHERE id = ?', [role, req.params.id]);
-    res.json({ msg: 'Role updated' });
+    res.json({ msg: 'Role updated for user' });
   } catch (err) {
-    res.status(400).json({ msg: 'Error updating role' });
+    res.status(400).json({ msg: 'Error updating role for user' });
   }
 });
 
