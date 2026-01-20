@@ -226,3 +226,44 @@ if (createExamForm) {
         createExamForm.reset();
     });
 }
+
+/* ==========================
+   TEACHER – VIEW OWN EXAMS
+========================== */
+
+function renderTeacherExams() {
+    const tableBody = document.getElementById("teacherExamTable");
+    if (!tableBody) return;
+
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    tableBody.innerHTML = "";
+
+    const myExams = exams.filter(
+        exam => exam.teacherEmail === teacher.email
+    );
+
+    if (myExams.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4">No exams created yet</td>
+            </tr>
+        `;
+        return;
+    }
+
+    myExams.forEach(exam => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${exam.title}</td>
+            <td>${exam.duration}</td>
+            <td>${exam.totalMarks}</td>
+            <td>${exam.createdAt}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+/* Auto load on page open */
+document.addEventListener("DOMContentLoaded", renderTeacherExams);
