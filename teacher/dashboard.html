@@ -6,11 +6,24 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>This is teacher dashboard</h2>
-    <script src="../js/auth.js"></script>
+   <div class="container dashboard">
+    <div class="card">
+        <h2>Teacher Dashboard</h2>
+        <p>Exam Management Panel</p>
+
+        <ul>
+            <li><a href="create-exam.html">➕ Create Exam</a></li>
+        </ul>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
 <script>
     requireRole("teacher");
 </script>
+
 
 </body>
 </html>

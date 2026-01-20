@@ -185,3 +185,44 @@ function requireRole(requiredRole) {
         window.location.href = "../login.html";
     }
 }
+/* ==========================
+   TEACHER – CREATE EXAM
+========================== */
+
+const createExamForm = document.getElementById("createExamForm");
+
+if (createExamForm) {
+    createExamForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const title = document.getElementById("exam_title").value.trim();
+        const desc = document.getElementById("exam_desc").value.trim();
+        const duration = document.getElementById("exam_duration").value;
+        const marks = document.getElementById("exam_marks").value;
+
+        if (!title || !desc || !duration || !marks) {
+            alert("All fields are required!");
+            return;
+        }
+
+        const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+
+        let exams = JSON.parse(localStorage.getItem("exams")) || [];
+
+        const exam = {
+            examId: Date.now(),
+            title: title,
+            description: desc,
+            duration: duration,
+            totalMarks: marks,
+            teacherEmail: teacher.email,
+            createdAt: new Date().toLocaleString()
+        };
+
+        exams.push(exam);
+        localStorage.setItem("exams", JSON.stringify(exams));
+
+        alert("Exam created successfully!");
+        createExamForm.reset();
+    });
+}
