@@ -1,25 +1,27 @@
 /* =========================================================
-   AUTH SYSTEM – ADMIN CONTROLLED
+   AUTH + ADMIN USER MANAGEMENT (FINAL STABLE VERSION)
 ========================================================= */
 
 /* ==========================
    ENSURE DEFAULT ADMIN
 ========================== */
-let users = JSON.parse(localStorage.getItem("users"));
-
-if (!users || users.length === 0) {
-    users = [{
-        name: "System Admin",
-        email: "admin@exam.com",
-        password: "admin123",
-        role: "admin",
-        active: true
-    }];
-    localStorage.setItem("users", JSON.stringify(users));
+function ensureAdmin() {
+    let users = JSON.parse(localStorage.getItem("users"));
+    if (!users || users.length === 0) {
+        users = [{
+            name: "System Admin",
+            email: "admin@exam.com",
+            password: "admin123",
+            role: "admin",
+            active: true
+        }];
+        localStorage.setItem("users", JSON.stringify(users));
+    }
 }
+ensureAdmin();
 
 /* ==========================
-   LOGIN LOGIC
+   LOGIN
 ========================== */
 const loginForm = document.getElementById("loginForm");
 
@@ -31,9 +33,8 @@ if (loginForm) {
         const password = document.getElementById("password").value.trim();
 
         const users = JSON.parse(localStorage.getItem("users")) || [];
-
         const user = users.find(
-            u => u.email === email && u.password === password && u.active === true
+            u => u.email === email && u.password === password && u.active
         );
 
         if (!user) {
@@ -41,19 +42,115 @@ if (loginForm) {
             return;
         }
 
-        // Save login session
         localStorage.setItem("loggedInUser", JSON.stringify(user));
 
-        // Redirect by role
         if (user.role === "admin") {
             window.location.href = "admin/dashboard.html";
         } else if (user.role === "teacher") {
             window.location.href = "teacher/dashboard.html";
-        } else if (user.role === "student") {
+        } else {
             window.location.href = "student/dashboard.html";
         }
     });
 }
+
+/* ==========================
+   ADMIN CREATE USER
+========================== */
+const createUserForm = document.getElementById("createUserForm");
+
+if (createUserForm) {
+    createUserForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("cu_name").value.trim();
+        const email = document.getElementById("cu_email").value.trim();
+        const password = document.getElementById("cu_password").value.trim();
+        const role = document.getElementById("cu_role").value;
+
+        if (!name || !email || !password || !role) {
+            alert("All fields are required!");
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        if (users.some(u => u.email === email)) {
+            alert("User already exists!");
+            return;
+        }
+
+        users.push({
+            name,
+            email,
+            password,
+            role,
+            active: true
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+
+        alert("User created successfully!");
+        window.location.href = "manage-users.html";
+    });
+}
+
+/* ==========================
+   MANAGE USERS (FINAL FIX)
+========================== */
+function renderUsers() {
+    const tbody = document.getElementById("usersTableBody");
+    if (!tbody) return;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    tbody.innerHTML = "";
+
+    users.forEach((user, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.role}</td>
+            <td>${user.active ? "Active" : "Blocked"}</td>
+            <td>
+                <button onclick="toggleUser(${index})">
+                    ${user.active ? "Block" : "Unblock"}
+                </button>
+                <button onclick="deleteUser(${index})">Delete</button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+function toggleUser(index) {
+    let users = JSON.parse(localStorage.getItem("users"));
+    users[index].active = !users[index].active;
+    localStorage.setItem("users", JSON.stringify(users));
+    renderUsers();
+}
+
+function deleteUser(index) {
+    let users = JSON.parse(localStorage.getItem("users"));
+
+    if (users[index].role === "admin") {
+        alert("Admin cannot be deleted!");
+        return;
+    }
+
+    if (confirm("Are you sure?")) {
+        users.splice(index, 1);
+        localStorage.setItem("users", JSON.stringify(users));
+        renderUsers();
+    }
+}
+
+/* ==========================
+   AUTO LOAD ON PAGE READY
+========================== */
+document.addEventListener("DOMContentLoaded", renderUsers);
 
 /* ==========================
    LOGOUT

@@ -6,10 +6,18 @@
 </head>
 <body>
 
-<div class="card">
-    <h2>Admin Dashboard</h2>
-    <p>Welcome, System Admin</p>
-    <button onclick="logout()">Logout</button>
+<div class="container dashboard">
+    <div class="card">
+        <h2>Admin Dashboard</h2>
+        <p>System Control Panel</p>
+
+        <ul>
+            <li><a href="create-user.html">➕ Create User</a></li>
+            <li><a href="manage-users.html">👥 Manage Users</a></li>
+        </ul>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
 </div>
 
 <script src="../js/auth.js"></script>

@@ -1,11 +1,35 @@
-<form id="createUserForm">
-    <input type="text" id="name" required>
-    <input type="email" id="email" required>
-    <input type="password" id="password" required>
-    <select id="role" required>
-        <option value="teacher">Teacher</option>
-        <option value="student">Student</option>
-        <option value="admin">Admin</option>
-    </select>
-    <button type="submit">Create User</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+
+<div class="container dashboard">
+    <div class="card">
+        <h2>Create New User</h2>
+        <p>Admin Only</p>
+
+        <form id="createUserForm">
+            <input type="text" id="cu_name" placeholder="Full Name" required>
+            <input type="email" id="cu_email" placeholder="User Email" required>
+            <input type="password" id="cu_password" placeholder="Password" required>
+
+            <select id="cu_role" required>
+                <option value="">Select Role</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+
+            <button type="submit">Create User</button>
+        </form>
+
+        <br>
+        <button onclick="window.location.href='dashboard.html'">⬅ Back</button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+</body>
+</html>
