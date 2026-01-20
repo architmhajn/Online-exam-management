@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Questions</title>
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+
+<div class="container dashboard">
+    <div class="card">
+        <h2>Add Question</h2>
+
+        <form id="questionForm">
+            <input type="hidden" id="examId">
+
+            <textarea id="questionText" placeholder="Question text" required></textarea>
+
+            <input type="text" id="optA" placeholder="Option A" required>
+            <input type="text" id="optB" placeholder="Option B" required>
+            <input type="text" id="optC" placeholder="Option C" required>
+            <input type="text" id="optD" placeholder="Option D" required>
+
+            <select id="correctOpt" required>
+                <option value="">Correct Option</option>
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+            </select>
+
+            <button type="submit">Add Question</button>
+        </form>
+
+        <br>
+        <button onclick="window.location.href='view-exams.html'">⬅ Back</button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+<script>
+    requireRole("teacher");
+</script>
+</body>
+</html>

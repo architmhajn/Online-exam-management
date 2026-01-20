@@ -267,3 +267,75 @@ function renderTeacherExams() {
 
 /* Auto load on page open */
 document.addEventListener("DOMContentLoaded", renderTeacherExams);
+/* ==========================
+   TEACHER – ADD QUESTIONS
+========================== */
+
+// Render exams with Add Question button
+function renderTeacherExams() {
+    const tableBody = document.getElementById("teacherExamTable");
+    if (!tableBody) return;
+
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    tableBody.innerHTML = "";
+
+    const myExams = exams.filter(e => e.teacherEmail === teacher.email);
+
+    myExams.forEach(exam => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${exam.title}</td>
+            <td>${exam.duration}</td>
+            <td>${exam.totalMarks}</td>
+            <td>
+                <button onclick="openAddQuestion(${exam.examId})">
+                    Add Questions
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function openAddQuestion(examId) {
+    localStorage.setItem("currentExamId", examId);
+    window.location.href = "add-questions.html";
+}
+
+/* ==========================
+   SAVE QUESTION
+========================== */
+
+const questionForm = document.getElementById("questionForm");
+
+if (questionForm) {
+    const examId = localStorage.getItem("currentExamId");
+    document.getElementById("examId").value = examId;
+
+    questionForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const question = {
+            questionId: Date.now(),
+            examId: examId,
+            questionText: document.getElementById("questionText").value.trim(),
+            optionA: document.getElementById("optA").value.trim(),
+            optionB: document.getElementById("optB").value.trim(),
+            optionC: document.getElementById("optC").value.trim(),
+            optionD: document.getElementById("optD").value.trim(),
+            correctOption: document.getElementById("correctOpt").value
+        };
+
+        let questions = JSON.parse(localStorage.getItem("questions")) || [];
+        questions.push(question);
+        localStorage.setItem("questions", JSON.stringify(questions));
+
+        alert("Question added successfully!");
+        questionForm.reset();
+    });
+}
+
+/* Auto load exams */
+document.addEventListener("DOMContentLoaded", renderTeacherExams);
