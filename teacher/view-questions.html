@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Questions</title>
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+
+<div class="container dashboard">
+    <div class="card">
+        <h2>Exam Questions</h2>
+        <p>Questions for selected exam</p>
+
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Question</th>
+                    <th>Correct Option</th>
+                </tr>
+            </thead>
+            <tbody id="questionTable">
+                <!-- injected by JS -->
+            </tbody>
+        </table>
+
+        <br>
+        <button onclick="window.location.href='view-exams.html'">
+            ⬅ Back to Exams
+        </button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+<script>
+    requireRole("teacher");
+</script>
+</body>
+</html>

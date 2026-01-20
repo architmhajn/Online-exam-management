@@ -281,10 +281,22 @@ function renderTeacherExams() {
 
     tableBody.innerHTML = "";
 
-    const myExams = exams.filter(e => e.teacherEmail === teacher.email);
+    const myExams = exams.filter(
+        exam => exam.teacherEmail === teacher.email
+    );
+
+    if (myExams.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4">No exams created yet</td>
+            </tr>
+        `;
+        return;
+    }
 
     myExams.forEach(exam => {
         const row = document.createElement("tr");
+
         row.innerHTML = `
             <td>${exam.title}</td>
             <td>${exam.duration}</td>
@@ -293,11 +305,16 @@ function renderTeacherExams() {
                 <button onclick="openAddQuestion(${exam.examId})">
                     Add Questions
                 </button>
+                <button onclick="openViewQuestions(${exam.examId})">
+                    View Questions
+                </button>
             </td>
         `;
+
         tableBody.appendChild(row);
     });
 }
+
 
 function openAddQuestion(examId) {
     localStorage.setItem("currentExamId", examId);
@@ -339,3 +356,48 @@ if (questionForm) {
 
 /* Auto load exams */
 document.addEventListener("DOMContentLoaded", renderTeacherExams);
+/* ==========================
+   TEACHER – VIEW QUESTIONS
+========================== */
+
+function openViewQuestions(examId) {
+    localStorage.setItem("viewExamId", examId);
+    window.location.href = "view-questions.html";
+}
+
+function renderQuestions() {
+    const tableBody = document.getElementById("questionTable");
+    if (!tableBody) return;
+
+    const examId = localStorage.getItem("viewExamId");
+    const questions = JSON.parse(localStorage.getItem("questions")) || [];
+
+    tableBody.innerHTML = "";
+
+    const examQuestions = questions.filter(
+        q => q.examId == examId
+    );
+
+    if (examQuestions.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="3">No questions added yet</td>
+            </tr>
+        `;
+        return;
+    }
+
+    examQuestions.forEach((q, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${q.questionText}</td>
+            <td>${q.correctOption}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+/* Auto load on page open */
+document.addEventListener("DOMContentLoaded", renderQuestions);
+
