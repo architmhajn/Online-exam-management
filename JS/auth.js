@@ -159,3 +159,29 @@ function logout() {
     localStorage.removeItem("loggedInUser");
     window.location.href = "../login.html";
 }
+/* ==========================
+   SESSION & ROLE PROTECTION
+========================== */
+
+function requireLogin() {
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!user) {
+        alert("Please login first!");
+        window.location.href = "../login.html";
+    }
+}
+
+function requireRole(requiredRole) {
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    if (!user) {
+        alert("Please login first!");
+        window.location.href = "../login.html";
+        return;
+    }
+
+    if (user.role !== requiredRole) {
+        alert("Unauthorized access!");
+        window.location.href = "../login.html";
+    }
+}
