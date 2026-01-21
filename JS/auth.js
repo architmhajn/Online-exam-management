@@ -462,6 +462,7 @@ document.addEventListener("DOMContentLoaded", renderStudentExams);
 ========================== */
 
 function loadExamQuestions() {
+    
     const container = document.getElementById("questionContainer");
     if (!container) return;
 
@@ -476,6 +477,8 @@ function loadExamQuestions() {
     }
 
     document.getElementById("examTitle").innerText = exam.title;
+    enableAntiCheat();
+
     startExamTimer(Number(exam.duration));
 
     const examQuestions = questions.filter(q => q.examId == examId);
@@ -751,3 +754,80 @@ function autoSubmitExam() {
         examForm.dispatchEvent(new Event("submit"));
     }
 }
+/* ==========================
+   STEP 9 – CLEAN ANTI-CHEATING
+========================== */
+
+let examStarted = false;
+let cheatCount = 0;
+const MAX_CHEAT_LIMIT = 3;
+
+/* Enable monitoring */
+function enableAntiCheat() {
+    examStarted = true;
+    cheatCount = 0;
+    updateCheatUI();
+}
+
+/* Disable monitoring */
+function disableAntiCheat() {
+    examStarted = false;
+}
+
+/* Update UI counter */
+function updateCheatUI() {
+    const el = document.getElementById("cheatCounter");
+    if (el) {
+        el.innerText = `Violations: ${cheatCount} / ${MAX_CHEAT_LIMIT}`;
+    }
+}
+
+/* Log cheating */
+function logCheating(type) {
+    const examId = localStorage.getItem("attemptExamId");
+    const student = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    if (!examId || !student) return;
+
+    const logs = JSON.parse(localStorage.getItem("cheatingLogs")) || [];
+
+    logs.push({
+        examId: Number(examId),
+        studentEmail: student.email,
+        type,
+        time: new Date().toLocaleString()
+    });
+
+    localStorage.setItem("cheatingLogs", JSON.stringify(logs));
+}
+
+/* Handle cheating */
+function handleCheating(type) {
+    if (!examStarted) return;
+
+    cheatCount++;
+    updateCheatUI();
+    logCheating(type);
+
+    alert(
+        `Cheating detected: ${type}\n` +
+        `Warning ${cheatCount} of ${MAX_CHEAT_LIMIT}`
+    );
+
+    if (cheatCount >= MAX_CHEAT_LIMIT) {
+        alert("Cheating limit exceeded. Exam will be auto-submitted.");
+        disableAntiCheat();
+        autoSubmitExam();
+    }
+}
+
+/* ONE-TIME listeners */
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        handleCheating("TAB_SWITCH");
+    }
+});
+
+window.addEventListener("blur", () => {
+    handleCheating("WINDOW_BLUR");
+});
