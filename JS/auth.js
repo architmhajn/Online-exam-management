@@ -901,3 +901,74 @@ document.addEventListener("DOMContentLoaded", () => {
     renderAdminCheatingLogs();
     renderTeacherCheatingLogs();
 });
+/* ==========================
+   STEP 12 – VIEW RESULTS
+========================== */
+
+/* ADMIN – VIEW ALL RESULTS */
+function renderAdminResults() {
+    const table = document.getElementById("adminResultTable");
+    if (!table) return;
+
+    const results = JSON.parse(localStorage.getItem("results")) || [];
+    table.innerHTML = "";
+
+    if (results.length === 0) {
+        table.innerHTML = `<tr><td colspan="5">No results available</td></tr>`;
+        return;
+    }
+
+    results.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${r.examId}</td>
+            <td>${r.studentEmail}</td>
+            <td>${r.score}</td>
+            <td>${r.totalQuestions}</td>
+            <td>${r.submittedAt}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+/* TEACHER – VIEW RESULTS FOR OWN EXAMS */
+function renderTeacherResults() {
+    const table = document.getElementById("teacherResultTable");
+    if (!table) return;
+
+    const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const results = JSON.parse(localStorage.getItem("results")) || [];
+
+    const myExamIds = exams
+        .filter(e => e.teacherEmail === teacher.email)
+        .map(e => e.examId);
+
+    const myResults = results.filter(r =>
+        myExamIds.includes(r.examId)
+    );
+
+    table.innerHTML = "";
+
+    if (myResults.length === 0) {
+        table.innerHTML = `<tr><td colspan="4">No results yet</td></tr>`;
+        return;
+    }
+
+    myResults.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${r.studentEmail}</td>
+            <td>${r.score}</td>
+            <td>${r.totalQuestions}</td>
+            <td>${r.submittedAt}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+/* Auto-load */
+document.addEventListener("DOMContentLoaded", () => {
+    renderAdminResults();
+    renderTeacherResults();
+});
