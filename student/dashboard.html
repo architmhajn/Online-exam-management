@@ -6,11 +6,24 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>This is student dashboard for student</h2>
-    <script src="../js/auth.js"></script>
+    <div class="container dashboard">
+    <div class="card">
+        <h2>Student Dashboard</h2>
+        <p>Online Examination System</p>
+
+        <ul>
+            <li><a href="view-exams.html">📘 View Available Exams</a></li>
+        </ul>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
 <script>
     requireRole("student");
 </script>
+
 
 </body>
 </html>

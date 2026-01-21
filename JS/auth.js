@@ -401,3 +401,59 @@ function renderQuestions() {
 /* Auto load on page open */
 document.addEventListener("DOMContentLoaded", renderQuestions);
 
+/* ==========================
+   STUDENT – VIEW ALLOTTED EXAMS ONLY
+========================== */
+
+function renderStudentExams() {
+    const tableBody = document.getElementById("studentExamTable");
+    if (!tableBody) return;
+
+    const student = JSON.parse(localStorage.getItem("loggedInUser"));
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const allotments = JSON.parse(localStorage.getItem("examAllotments")) || [];
+
+    tableBody.innerHTML = "";
+
+    // find exam IDs allotted to this student
+    const myExamIds = allotments
+        .filter(a => a.studentEmail === student.email)
+        .map(a => a.examId);
+
+    const myExams = exams.filter(exam =>
+        myExamIds.includes(exam.examId)
+    );
+
+    if (myExams.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4">No exams allotted to you</td>
+            </tr>
+        `;
+        return;
+    }
+
+    myExams.forEach(exam => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${exam.title}</td>
+            <td>${exam.duration}</td>
+            <td>${exam.totalMarks}</td>
+            <td>
+                <button onclick="startExam(${exam.examId})">
+                    Start Exam
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+
+function startExam(examId) {
+    localStorage.setItem("attemptExamId", examId);
+    alert("Exam will start in next step");
+}
+
+/* Auto load */
+document.addEventListener("DOMContentLoaded", renderStudentExams);
