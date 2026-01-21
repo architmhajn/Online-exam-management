@@ -450,9 +450,27 @@ function renderStudentExams() {
 }
 
 function startExam(examId) {
+    const student = JSON.parse(localStorage.getItem("loggedInUser"));
+    const results = JSON.parse(localStorage.getItem("results")) || [];
+
+    // 🔒 CHECK: has student already attempted this exam?
+    const alreadyAttempted = results.some(
+        r => r.examId == examId && r.studentEmail === student.email
+    );
+
+    if (alreadyAttempted) {
+        alert(
+            "You have already attempted this exam.\n\n" +
+            "Re-attempt is not allowed without teacher permission."
+        );
+        return; // ⛔ STOP HERE
+    }
+
+    // ✅ Allow first attempt only
     localStorage.setItem("attemptExamId", examId);
     window.location.href = "attempt-exam.html";
 }
+
 
 
 /* Auto load */
