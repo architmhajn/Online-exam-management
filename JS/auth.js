@@ -588,3 +588,55 @@ if (allotForm) {
         allotForm.reset();
     });
 }
+/* ==========================
+   STUDENT – SUBMIT & EVALUATE EXAM
+========================== */
+
+const examForm = document.getElementById("examForm");
+
+if (examForm) {
+    examForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const examId = localStorage.getItem("attemptExamId");
+        const student = JSON.parse(localStorage.getItem("loggedInUser"));
+        const questions = JSON.parse(localStorage.getItem("questions")) || [];
+
+        const examQuestions = questions.filter(q => q.examId == examId);
+
+        let correct = 0;
+
+        examQuestions.forEach(q => {
+            const selected = document.querySelector(
+                `input[name="q_${q.questionId}"]:checked`
+            );
+
+            if (selected && selected.value === q.correctOption) {
+                correct++;
+            }
+        });
+
+        const result = {
+            examId: Number(examId),
+            studentEmail: student.email,
+            totalQuestions: examQuestions.length,
+            correctAnswers: correct,
+            score: correct, // 1 mark per question
+            submittedAt: new Date().toLocaleString()
+        };
+
+        let results = JSON.parse(localStorage.getItem("results")) || [];
+        results.push(result);
+        localStorage.setItem("results", JSON.stringify(results));
+
+        alert(
+            `Exam Submitted!\n\n` +
+            `Score: ${result.score} / ${result.totalQuestions}`
+        );
+
+        // cleanup
+        localStorage.removeItem("attemptExamId");
+
+        window.location.href = "dashboard.html";
+    });
+}
