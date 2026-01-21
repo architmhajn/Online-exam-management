@@ -939,12 +939,18 @@ function renderAdminResults() {
     results.forEach(r => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${r.examId}</td>
-            <td>${r.studentEmail}</td>
-            <td>${r.score}</td>
-            <td>${r.totalQuestions}</td>
-            <td>${r.submittedAt}</td>
-        `;
+    <td>${r.examId}</td>
+    <td>${r.studentEmail}</td>
+    <td>${r.score}</td>
+    <td>${r.totalQuestions}</td>
+    <td>${r.submittedAt}</td>
+    <td>
+        <button onclick="resetAttempt(${r.examId}, '${r.studentEmail}')">
+            Allow Re-attempt
+        </button>
+    </td>
+`;
+
         table.appendChild(row);
     });
 }
@@ -976,11 +982,17 @@ function renderTeacherResults() {
     myResults.forEach(r => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${r.studentEmail}</td>
-            <td>${r.score}</td>
-            <td>${r.totalQuestions}</td>
-            <td>${r.submittedAt}</td>
-        `;
+    <td>${r.studentEmail}</td>
+    <td>${r.score}</td>
+    <td>${r.totalQuestions}</td>
+    <td>${r.submittedAt}</td>
+    <td>
+        <button onclick="resetAttempt(${r.examId}, '${r.studentEmail}')">
+            Reset Attempt
+        </button>
+    </td>
+`;
+
         table.appendChild(row);
     });
 }
@@ -1025,3 +1037,23 @@ function renderStudentResults() {
 }
 
 document.addEventListener("DOMContentLoaded", renderStudentResults);
+/* ==========================
+   TEACHER / ADMIN – RESET EXAM ATTEMPT
+========================== */
+
+function resetAttempt(examId, studentEmail) {
+    if (!confirm("Are you sure you want to allow re-attempt?")) return;
+
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+
+    // remove result entry
+    results = results.filter(
+        r => !(r.examId === examId && r.studentEmail === studentEmail)
+    );
+
+    localStorage.setItem("results", JSON.stringify(results));
+
+    alert("Attempt reset successfully. Student can re-attempt exam.");
+
+    location.reload();
+}
