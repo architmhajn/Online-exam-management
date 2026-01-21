@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Allot Exam</title>
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+
+<div class="container dashboard">
+    <div class="card">
+        <h2>Allot Exam to Student</h2>
+        <p>Teacher Panel</p>
+
+        <form id="teacherAllotForm">
+            <select id="teacherExamSelect" required>
+                <option value="">Select Your Exam</option>
+            </select>
+
+            <select id="teacherStudentSelect" required>
+                <option value="">Select Student</option>
+            </select>
+
+            <button type="submit">Allot Exam</button>
+        </form>
+
+        <br>
+        <button onclick="window.location.href='dashboard.html'">
+            ⬅ Back
+        </button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+<script>
+    requireRole("teacher");
+</script>
+</body>
+</html>

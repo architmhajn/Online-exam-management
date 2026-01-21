@@ -640,3 +640,77 @@ if (examForm) {
         window.location.href = "dashboard.html";
     });
 }
+/* ==========================
+   TEACHER – ALLOT EXAM TO STUDENT
+========================== */
+
+function loadTeacherAllotData() {
+    const examSelect = document.getElementById("teacherExamSelect");
+    const studentSelect = document.getElementById("teacherStudentSelect");
+
+    if (!examSelect || !studentSelect) return;
+
+    const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Load ONLY teacher's exams
+    exams
+        .filter(e => e.teacherEmail === teacher.email)
+        .forEach(exam => {
+            const opt = document.createElement("option");
+            opt.value = exam.examId;
+            opt.textContent = exam.title;
+            examSelect.appendChild(opt);
+        });
+
+    // Load students
+    users
+        .filter(u => u.role === "student" && u.active)
+        .forEach(student => {
+            const opt = document.createElement("option");
+            opt.value = student.email;
+            opt.textContent = student.email;
+            studentSelect.appendChild(opt);
+        });
+}
+
+/* Handle allotment */
+const teacherAllotForm = document.getElementById("teacherAllotForm");
+
+if (teacherAllotForm) {
+    loadTeacherAllotData();
+
+    teacherAllotForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const examId = document.getElementById("teacherExamSelect").value;
+        const studentEmail = document.getElementById("teacherStudentSelect").value;
+
+        if (!examId || !studentEmail) {
+            alert("Please select exam and student");
+            return;
+        }
+
+        let allotments = JSON.parse(localStorage.getItem("examAllotments")) || [];
+
+        const exists = allotments.some(
+            a => a.examId == examId && a.studentEmail === studentEmail
+        );
+
+        if (exists) {
+            alert("Exam already allotted to this student");
+            return;
+        }
+
+        allotments.push({
+            examId: Number(examId),
+            studentEmail: studentEmail
+        });
+
+        localStorage.setItem("examAllotments", JSON.stringify(allotments));
+
+        alert("Exam allotted successfully!");
+        teacherAllotForm.reset();
+    });
+}
