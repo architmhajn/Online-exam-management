@@ -990,3 +990,38 @@ document.addEventListener("DOMContentLoaded", () => {
     renderAdminResults();
     renderTeacherResults();
 });
+/* ==========================
+   STUDENT – VIEW OWN RESULTS
+========================== */
+
+function renderStudentResults() {
+    const table = document.getElementById("studentResultTable");
+    if (!table) return;
+
+    const student = JSON.parse(localStorage.getItem("loggedInUser"));
+    const results = JSON.parse(localStorage.getItem("results")) || [];
+
+    const myResults = results.filter(
+        r => r.studentEmail === student.email
+    );
+
+    table.innerHTML = "";
+
+    if (myResults.length === 0) {
+        table.innerHTML = `<tr><td colspan="4">No results found</td></tr>`;
+        return;
+    }
+
+    myResults.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${r.examId}</td>
+            <td>${r.score}</td>
+            <td>${r.totalQuestions}</td>
+            <td>${r.submittedAt}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", renderStudentResults);
