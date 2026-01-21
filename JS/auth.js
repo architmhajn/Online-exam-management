@@ -449,11 +449,70 @@ function renderStudentExams() {
     });
 }
 
-
 function startExam(examId) {
     localStorage.setItem("attemptExamId", examId);
-    alert("Exam will start in next step");
+    window.location.href = "attempt-exam.html";
 }
+
 
 /* Auto load */
 document.addEventListener("DOMContentLoaded", renderStudentExams);
+/* ==========================
+   STUDENT – LOAD EXAM & QUESTIONS
+========================== */
+
+function loadExamQuestions() {
+    const container = document.getElementById("questionContainer");
+    if (!container) return;
+
+    const examId = localStorage.getItem("attemptExamId");
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const questions = JSON.parse(localStorage.getItem("questions")) || [];
+
+    const exam = exams.find(e => e.examId == examId);
+    if (!exam) {
+        container.innerHTML = "<p>Exam not found</p>";
+        return;
+    }
+
+    document.getElementById("examTitle").innerText = exam.title;
+
+    const examQuestions = questions.filter(q => q.examId == examId);
+
+    if (examQuestions.length === 0) {
+        container.innerHTML = "<p>No questions available</p>";
+        return;
+    }
+
+    container.innerHTML = "";
+
+    examQuestions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.style.marginBottom = "20px";
+
+        div.innerHTML = `
+            <p><strong>Q${index + 1}. ${q.questionText}</strong></p>
+
+            <label>
+                <input type="radio" name="q_${q.questionId}" value="A"> ${q.optionA}
+            </label><br>
+
+            <label>
+                <input type="radio" name="q_${q.questionId}" value="B"> ${q.optionB}
+            </label><br>
+
+            <label>
+                <input type="radio" name="q_${q.questionId}" value="C"> ${q.optionC}
+            </label><br>
+
+            <label>
+                <input type="radio" name="q_${q.questionId}" value="D"> ${q.optionD}
+            </label>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+/* Load when page opens */
+document.addEventListener("DOMContentLoaded", loadExamQuestions);
