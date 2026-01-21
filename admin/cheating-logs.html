@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cheating Logs</title>
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+
+<div class="container dashboard">
+    <div class="card">
+        <h2>Cheating Logs (Admin)</h2>
+
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Exam ID</th>
+                    <th>Student</th>
+                    <th>Type</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="adminCheatTable"></tbody>
+        </table>
+
+        <br>
+        <button onclick="window.location.href='dashboard.html'">⬅ Back</button>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+<script>
+    requireRole("admin");
+</script>
+
+</body>
+</html>

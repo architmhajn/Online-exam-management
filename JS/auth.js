@@ -831,3 +831,73 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("blur", () => {
     handleCheating("WINDOW_BLUR");
 });
+
+
+/* ==========================
+   STEP 11 – VIEW CHEATING LOGS
+========================== */
+
+/* ADMIN – VIEW ALL LOGS */
+function renderAdminCheatingLogs() {
+    const table = document.getElementById("adminCheatTable");
+    if (!table) return;
+
+    const logs = JSON.parse(localStorage.getItem("cheatingLogs")) || [];
+    table.innerHTML = "";
+
+    if (logs.length === 0) {
+        table.innerHTML = `<tr><td colspan="4">No cheating logs</td></tr>`;
+        return;
+    }
+
+    logs.forEach(log => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${log.examId}</td>
+            <td>${log.studentEmail}</td>
+            <td>${log.type}</td>
+            <td>${log.time}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+/* TEACHER – VIEW LOGS FOR OWN EXAMS */
+function renderTeacherCheatingLogs() {
+    const table = document.getElementById("teacherCheatTable");
+    if (!table) return;
+
+    const teacher = JSON.parse(localStorage.getItem("loggedInUser"));
+    const exams = JSON.parse(localStorage.getItem("exams")) || [];
+    const logs = JSON.parse(localStorage.getItem("cheatingLogs")) || [];
+
+    // teacher exam IDs
+    const myExamIds = exams
+        .filter(e => e.teacherEmail === teacher.email)
+        .map(e => e.examId);
+
+    const myLogs = logs.filter(l => myExamIds.includes(l.examId));
+
+    table.innerHTML = "";
+
+    if (myLogs.length === 0) {
+        table.innerHTML = `<tr><td colspan="3">No cheating logs</td></tr>`;
+        return;
+    }
+
+    myLogs.forEach(log => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${log.studentEmail}</td>
+            <td>${log.type}</td>
+            <td>${log.time}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+/* Auto load */
+document.addEventListener("DOMContentLoaded", () => {
+    renderAdminCheatingLogs();
+    renderTeacherCheatingLogs();
+});

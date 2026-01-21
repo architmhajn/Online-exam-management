@@ -13,42 +13,50 @@
         <!-- HEADER -->
         <div class="dashboard-header">
             <h2>Teacher Dashboard</h2>
-            <p>Exam & Question Management</p>
+            <p>Exam & Monitoring Panel</p>
         </div>
 
         <!-- ACTION CARDS -->
         <div class="dashboard-actions">
 
-            <!-- Create Exam -->
             <a href="create-exam.html" class="action-card">
                 <span>➕</span>
                 <h4>Create Exam</h4>
                 <p>Create a new online exam</p>
             </a>
 
-            <!-- View Exams -->
             <a href="view-exams.html" class="action-card">
                 <span>📄</span>
                 <h4>View Exams</h4>
                 <p>Manage exams & questions</p>
             </a>
 
-            <!-- Allot Exam (THIS IS THE PART YOU ASKED ABOUT) -->
             <a href="allot-exam.html" class="action-card">
                 <span>📌</span>
                 <h4>Allot Exam</h4>
-                <p>Assign exam to students</p>
+                <p>Assign exams to students</p>
+            </a>
+
+            <a href="view-results.html" class="action-card">
+                <span>📊</span>
+                <h4>View Results</h4>
+                <p>Check student performance</p>
+            </a>
+
+            <!-- ✅ CHEATING LOGS CARD -->
+            <a href="cheating-logs.html" class="action-card">
+                <span>🚨</span>
+                <h4>Cheating Logs</h4>
+                <p>View violations in your exams</p>
             </a>
 
         </div>
 
-        <!-- LOGOUT -->
         <button class="logout-btn" onclick="logout()">Logout</button>
 
     </div>
 </div>
 
-<!-- AUTH -->
 <script src="../js/auth.js"></script>
 <script>
     requireRole("teacher");
