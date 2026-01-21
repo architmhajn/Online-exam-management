@@ -476,6 +476,7 @@ function loadExamQuestions() {
     }
 
     document.getElementById("examTitle").innerText = exam.title;
+    startExamTimer(Number(exam.duration));
 
     const examQuestions = questions.filter(q => q.examId == examId);
 
@@ -713,4 +714,40 @@ if (teacherAllotForm) {
         alert("Exam allotted successfully!");
         teacherAllotForm.reset();
     });
+}
+/* ==========================
+   STUDENT – EXAM TIMER & AUTO SUBMIT
+========================== */
+
+let examTimerInterval;
+
+function startExamTimer(durationMinutes) {
+    let timeLeft = durationMinutes * 60; // seconds
+    const timerEl = document.getElementById("timer");
+
+    examTimerInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        if (timerEl) {
+            timerEl.innerText =
+                `Time Left: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(examTimerInterval);
+            alert("Time is up! Exam will be submitted automatically.");
+            autoSubmitExam();
+        }
+
+        timeLeft--;
+    }, 1000);
+}
+
+/* Auto submit function */
+function autoSubmitExam() {
+    const examForm = document.getElementById("examForm");
+    if (examForm) {
+        examForm.dispatchEvent(new Event("submit"));
+    }
 }
