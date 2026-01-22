@@ -5,54 +5,15 @@
 /* ==========================
    ENSURE DEFAULT ADMIN
 ========================== */
-function ensureAdmin() {
-    let users = JSON.parse(localStorage.getItem("users"));
-    if (!users || users.length === 0) {
-        users = [{
-            name: "System Admin",
-            email: "admin@exam.com",
-            password: "admin123",
-            role: "admin",
-            active: true
-        }];
-        localStorage.setItem("users", JSON.stringify(users));
-    }
+function isLoginPage() {
+    return window.location.pathname.endsWith("login.html");
 }
-ensureAdmin();
+
 
 /* ==========================
    LOGIN
 ========================== */
-const loginForm = document.getElementById("loginForm");
 
-if (loginForm) {
-    loginForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        const user = users.find(
-            u => u.email === email && u.password === password && u.active
-        );
-
-        if (!user) {
-            alert("Unauthorized access!");
-            return;
-        }
-
-        localStorage.setItem("loggedInUser", JSON.stringify(user));
-
-        if (user.role === "admin") {
-            window.location.href = "admin/dashboard.html";
-        } else if (user.role === "teacher") {
-            window.location.href = "teacher/dashboard.html";
-        } else {
-            window.location.href = "student/dashboard.html";
-        }
-    });
-}
 
 /* ==========================
    ADMIN CREATE USER
@@ -152,6 +113,40 @@ function deleteUser(index) {
 ========================== */
 document.addEventListener("DOMContentLoaded", renderUsers);
 
+
+async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert(data.message);
+        return;
+    }
+
+    // ✅ Save login info FIRST
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+
+    // ✅ Then redirect
+    if (data.user.role === "admin") {
+        window.location.href = "admin/dashboard.html";
+    } 
+    else if (data.user.role === "teacher") {
+        window.location.href = "teacher/dashboard.html";
+    } 
+    else {
+        window.location.href = "student/dashboard.html";
+    }
+}
+
 /* ==========================
    LOGOUT
 ========================== */
@@ -171,20 +166,19 @@ function requireLogin() {
     }
 }
 
-function requireRole(requiredRole) {
+function requireRole(role) {
+    // 🚫 Never block login page
+    if (isLoginPage()) return;
+
+    const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-    if (!user) {
-        alert("Please login first!");
-        window.location.href = "../login.html";
-        return;
-    }
-
-    if (user.role !== requiredRole) {
+    if (!token || !user || user.role !== role) {
         alert("Unauthorized access!");
-        window.location.href = "../login.html";
+        window.location.href = "/Online-exam-management/login.html";
     }
 }
+
 /* ==========================
    TEACHER – CREATE EXAM
 ========================== */
