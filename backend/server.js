@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const examRoutes = require("./routes/exams");
+app.use("/api/exams", examRoutes);
+
 const app = express();
 app.use(express.json());
 app.use(cors());
