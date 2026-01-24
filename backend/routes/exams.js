@@ -141,6 +141,29 @@ async function submitExam(score) {
     localStorage.removeItem("attemptExamId");
     window.location.href = "dashboard.html";
 }
+async function logCheating(type) {
+
+    const examId = localStorage.getItem("attemptExamId");
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    if (!examId || !user) return;
+
+    await fetch(
+        "http://localhost:5000/api/exams/cheat-log",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                examId,
+                studentId: user.id,
+                type: type
+            })
+        }
+    );
+}
 
 /* ADMIN / TEACHER → VIEW RESULTS */
 router.get("/results", (req, res) => {
@@ -181,3 +204,43 @@ router.delete("/reset-attempt/:id", (req, res) => {
     });
 });
 
+/* STUDENT → LOG CHEATING */
+router.post("/cheat-log", (req, res) => {
+    const { examId, studentId, type } = req.body;
+
+    const sql = `
+        INSERT INTO cheating_logs (exam_id, student_id, type)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(sql, [examId, studentId, type], (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Database error" });
+        }
+
+        res.json({ message: "Cheating logged" });
+    });
+});
+/* ADMIN / TEACHER → VIEW CHEATING LOGS */
+router.get("/cheat-logs", (req, res) => {
+
+    const sql = `
+        SELECT 
+            c.id,
+            u.email AS student,
+            e.title AS exam,
+            c.type,
+            c.created_at
+        FROM cheating_logs c
+        JOIN users u ON c.student_id = u.id
+        JOIN exams e ON c.exam_id = e.id
+        ORDER BY c.created_at DESC
+    `;
+
+    db.query(sql, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Database error" });
+        }
+        res.json(result);
+    });
+});

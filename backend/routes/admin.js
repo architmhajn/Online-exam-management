@@ -63,6 +63,20 @@ router.get("/users", (req, res) => {
         res.json(results);
     });
 });
+/* GET ALL STUDENTS */
+router.get("/students", (req, res) => {
+
+    const sql = "SELECT id, email FROM users WHERE role = 'student' AND active = 1";
+
+    db.query(sql, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "DB Error" });
+        }
+
+        res.json(result);
+    });
+});
+
 /**
  * ADMIN → TOGGLE USER STATUS (FIXED)
  */
