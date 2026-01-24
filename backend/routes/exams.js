@@ -147,6 +147,12 @@ async function logCheating(type) {
     const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
     if (!examId || !user) return;
+// GET exams
+router.get("/", (req, res) => {
+    db.query("SELECT * FROM exams", (err, result) => {
+        res.json(result);
+    });
+});
 
     await fetch(
         "http://localhost:5000/api/exams/cheat-log",
@@ -243,4 +249,37 @@ router.get("/cheat-logs", (req, res) => {
         }
         res.json(result);
     });
+});
+/* TEACHER / ADMIN → CREATE EXAM */
+
+router.post("/", (req, res) => {
+
+    console.log("✅ POST /api/exams HIT");
+    console.log("📦 BODY:", req.body);
+
+    const { title, description, duration, totalMarks, teacherId } = req.body;
+
+    if (!title || !teacherId) {
+        console.log("❌ Missing data");
+        return res.status(400).json({ message: "Missing data" });
+    }
+
+    const sql = `
+        INSERT INTO exams (title, description, duration, total_marks, teacher_id)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [title, description, duration, totalMarks, teacherId],
+        (err, result) => {
+            if (err) {
+                console.error("❌ INSERT ERROR:", err);
+                return res.status(500).json({ message: "Insert failed" });
+            }
+
+            console.log("✅ INSERT SUCCESS, ID:", result.insertId);
+            res.json({ message: "Exam created successfully" });
+        }
+    );
 });

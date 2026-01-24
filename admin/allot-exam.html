@@ -1,40 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Allot Exam</title>
-    <link rel="stylesheet" href="../css/auth.css">
 </head>
 <body>
 
-<div class="container dashboard">
-    <div class="card">
-        <h2>Allot Exam to Student</h2>
-        <p>Admin Control Panel</p>
+<h2>Allot Exam to Student</h2>
 
-        <form id="allotExamForm">
+<form id="allotForm">
 
-            <select id="examSelect" required>
-                <option value="">Select Exam</option>
-            </select>
+    <label>Exam</label>
+    <select id="examSelect" required></select>
 
-            <select id="studentSelect" required>
-                <option value="">Select Student</option>
-            </select>
+    <br><br>
 
-            <button type="submit">Allot Exam</button>
-        </form>
+    <label>Student</label>
+    <select id="studentSelect" required></select>
 
-        <br>
-        <button onclick="window.location.href='dashboard.html'">
-            ⬅ Back to Dashboard
-        </button>
-    </div>
-</div>
+    <br><br>
+
+    <button type="submit">Allot Exam</button>
+
+</form>
 
 <script src="../js/auth.js"></script>
+<script src="./js/allot-exam.js"></script>
+
+
 <script>
     requireRole("admin");
 </script>
+
 </body>
 </html>
